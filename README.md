@@ -14,13 +14,10 @@
 ### service
 - [BlogService.java](/src/main/java/com/sparta/week3_s_hwk/service/BlogService.java)
 
-> [Week3SHwkApplication.java](/src/main/java/com/sparta/week3_s_hwk/Week3SHwkApplication.java)
+> [Week3SHwkApplication.java](/src/main/java/com/sparta/week3_s_hwk/Week3SHwkApplication.java) - 서버 실행 코드
 
 ---------------------------
-## [서버 자료 폴더](/src/main/java/com/sparta/week3_s_hwk/) - 서버 전체 코드
-### controller
-- [BlogController.java](/src/main/java/com/sparta/week3_s_hwk/controller/BlogController.java)
+## [클라이언트 자료 폴더](/src/main/resources/) - 클라이언트 전체 코드
+### static
+- [index.html](/src/main/resources/static/index.html)
 
-
-- repository
-- index.html
