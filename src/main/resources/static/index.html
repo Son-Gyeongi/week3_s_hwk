@@ -142,6 +142,9 @@
                                         <div class="level-item"> <!--수정할 때 보이기-->
                                             <a id="${id}-submit" class="updateEdit" onclick="submitEdit('${id}')">저장하기</a>
                                         </div>
+                                        <div class="level-item"> <!--수정할 때 보이기-->
+                                            <a id="${id}-cancel" class="updateEdit" onclick="hideEdits('${id}')">수정취소</a>
+                                        </div>
                                         <div class="level-item">
                                             <a id="delete" onclick="deleteOne('${id}')">삭제하기</a>
                                         </div>
@@ -253,11 +256,24 @@
         $(`#${id}-editTitle`).show();
         $(`#${id}-submit`).show();
         $(`#${id}-update-textarea`).show();
+        $(`#${id}-cancel`).show();
 
         $(`#${id}-titleContent`).hide();
         $(`#${id}-dateContent`).hide();
         $(`#${id}-contents`).hide();
         $(`#${id}-edit`).hide();
+    }
+
+    function hideEdits(id) {
+        $(`#${id}-editTitle`).hide();
+        $(`#${id}-submit`).hide();
+        $(`#${id}-update-textarea`).hide();
+        $(`#${id}-cancel`).hide();
+
+        $(`#${id}-titleContent`).show();
+        $(`#${id}-dateContent`).show();
+        $(`#${id}-contents`).show();
+        $(`#${id}-edit`).show();
     }
 
     //수정한거 저장하기
