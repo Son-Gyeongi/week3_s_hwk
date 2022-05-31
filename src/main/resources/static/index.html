@@ -55,7 +55,21 @@
         display: none;
     }
     .mainContents {
-        margin: 50px auto 50px 450px;
+        margin: 50px;
+    }
+    #cards-box{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .card {
+        width: 500px;
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+    .commentCard{
+        border: 1px solid gray;
     }
 </style>
 
@@ -66,7 +80,7 @@
 
     //전체 목록 조회
     function getMessages() {
-        $('#cards-box').empty();
+        // $('#cards-box').empty();
         $.ajax({
             type: "GET",
             url: "/api/blogs",
@@ -92,8 +106,7 @@
     }
 
     function makeMessage(id, username, title, contents, modifiedAt) {
-        return `<div class="row">
-                <div class="col-sm-6">
+        return `
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">${title}</h5>
@@ -104,8 +117,6 @@
                             </p>
                         </div>
                     </div>
-                </div>
-            </div>
             <div class="modal" id="${id}-modal-detail">
                 <div class="modal-background" onclick='$("#${id}-modal-detail").removeClass("is-active")'></div>
                 <div class="modal-content">
@@ -235,29 +246,7 @@
             }
         });
     }
-    //
-    // //수정하기 - getPassword 함수랑 수정하기 함수 다르게 해서 할려고 했는데 합쳐야되나보다
-    // function editPost(id) {
-    //     let password = $(`#${id}-update-password`).val();
-    //     let pw = getPassword(id);
-    //     console.log(password);
-    //     console.log(pw);
-    //     //만약에 사용자 비밀번호가 일치하면 아래 수행가능
-    //     if (password != pw) {
-    //         alert("간절하다");
-    //         return;
-    //     }
-    //         showEdits(id);
-    //         //제목수정
-    //         let updateTile = $(`#${id}-titleContent`).text().trim();
-    //         $(`#${id}-update-title`).val(updateTile);
-    //
-    //         //내용 수정
-    //         let updateContent = $(`#${id}-contents`).text().trim();
-    //         $(`#${id}-update-textarea`).val(updateContent);
-    //
-    //
-    // }
+
     function showEdits(id) {
         $(`#${id}-editTitle`).show();
         $(`#${id}-submit`).show();
@@ -341,6 +330,8 @@
         <div class="media-content">
             <div class="field">
                 <p class="control">
+                    <a id="login-text" href="/user/login"> 로그인 </a>
+                    <a id="signup-text" href="/user/signup"> 회원가입 </a>
                     <button class="btn btn-danger" onclick='$("#modal-post").addClass("is-active")'>작성하기</button>
                 </p>
             </div>
@@ -390,18 +381,14 @@
     </section>
     <section class="mainContents">
         <div id="cards-box">
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">제목</h5>
-                            <p class="card-writer">작성자</p>
-                            <p class="card-date" style="color: gray;">날짜</p>
-                            <p class="control">
-                                <button class="btn btn-danger" onclick='$("#modal-detail").addClass("is-active")'>자세히보기</button>
-                            </p>
-                        </div>
-                    </div>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">제목</h5>
+                    <p class="card-writer">작성자</p>
+                    <p class="card-date" style="color: gray;">날짜</p>
+                    <p class="control">
+                        <button class="btn btn-danger" onclick='$("#modal-detail").addClass("is-active")'>자세히보기</button>
+                    </p>
                 </div>
             </div>
             <div class="modal" id="modal-detail">
@@ -432,7 +419,46 @@
                                         내용 작성
                                     </div>
                                     <div id="1-editArea" class="edit">
-                                        <textarea id="1-update-textarea" class="textarea updateEdit"></textarea>
+                                        <textarea id="1-update-textarea" class="textarea updateEdit" ></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-floating comment-box">
+                                    <textarea class="form-control" placeholder="댓글을 입력해주세요" id="floatingTextarea"></textarea>
+                                    <label for="floatingTextarea">댓글을 입력해주세요</label>
+                                </div>
+                                <div class="commentCard">
+                                    <div class="metadata">
+                                        <div id="839-name" class="name">
+                                            hjyg
+                                        </div>
+                                        <div class="date">
+                                            2022-05-30 21:07:55
+                                        </div>
+                                    </div>
+                                    <div class="commentContents" id="839-reply">
+                                        그만큼 신나신다는거지
+                                    </div>
+                                    <div id="839-comment-editarea" class="edit">
+                                        <textarea id="839-comment-textarea" class="te-edit" name="" cols="30" rows="5"></textarea>
+                                    </div>
+                                    <div class="footer hide">
+                                        <div class="level-left">
+
+                                        </div>
+                                        <div class="level-right">
+                                            <div class="level-item">
+                                                <a id="1-comment-edit" onclick="editComment('1')">댓글수정</a>
+                                            </div>
+                                            <div class="level-item"> <!--수정할 때 보이기-->
+                                                <a id="1-comment-submit" class="updateEdit" onclick="submitComment('1')">댓글저장</a>
+                                            </div>
+                                            <div class="level-item">
+                                                <a id="1-comment-delete" onclick="deleteOneComment('1')">댓글삭제</a>
+                                            </div>
+                                            <div class="level-item">
+                                                <a class="button" onclick='$("#839-comment-editarea").hide'>댓글작성취소</a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <nav class="level is-mobile">

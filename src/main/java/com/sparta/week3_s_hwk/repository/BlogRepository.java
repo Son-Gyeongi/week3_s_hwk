@@ -1,6 +1,6 @@
-package com.sparta.week3_s_hwk.models;
+package com.sparta.week3_s_hwk.repository;
 
-import com.sparta.week3_s_hwk.domain.Blog;
+import com.sparta.week3_s_hwk.model.Blog;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

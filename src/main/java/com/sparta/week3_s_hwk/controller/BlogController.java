@@ -1,8 +1,8 @@
 package com.sparta.week3_s_hwk.controller;
 
-import com.sparta.week3_s_hwk.domain.Blog;
-import com.sparta.week3_s_hwk.models.BlogRequestDto;
-import com.sparta.week3_s_hwk.models.BlogRepository;
+import com.sparta.week3_s_hwk.model.Blog;
+import com.sparta.week3_s_hwk.dto.BlogRequestDto;
+import com.sparta.week3_s_hwk.repository.BlogRepository;
 import com.sparta.week3_s_hwk.service.BlogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

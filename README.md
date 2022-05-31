@@ -6,11 +6,11 @@
 ### controller
 - [BlogController.java](/src/main/java/com/sparta/week3_s_hwk/controller/BlogController.java)
 ### domain
-- [Blog.java](/src/main/java/com/sparta/week3_s_hwk/domain/Blog.java)
-- [Timestamped.java](/src/main/java/com/sparta/week3_s_hwk/domain/TimeStamped.java)
+- [Blog.java](/src/main/java/com/sparta/week3_s_hwk/model/Blog.java)
+- [Timestamped.java](/src/main/java/com/sparta/week3_s_hwk/model/TimeStamped.java)
 ### models
-- [BlogRepository.java](/src/main/java/com/sparta/week3_s_hwk/models/BlogRepository.java)
-- [BlogRequestDto.java](/src/main/java/com/sparta/week3_s_hwk/models/BlogRequestDto.java)
+- [BlogRepository.java](/src/main/java/com/sparta/week3_s_hwk/repository/BlogRepository.java)
+- [BlogRequestDto.java](/src/main/java/com/sparta/week3_s_hwk/repository/BlogRequestDto.java)
 ### service
 - [BlogService.java](/src/main/java/com/sparta/week3_s_hwk/service/BlogService.java)
 

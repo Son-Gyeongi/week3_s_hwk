@@ -1,6 +1,6 @@
-package com.sparta.week3_s_hwk.domain;
+package com.sparta.week3_s_hwk.model;
 
-import com.sparta.week3_s_hwk.models.BlogRequestDto;
+import com.sparta.week3_s_hwk.dto.BlogRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
