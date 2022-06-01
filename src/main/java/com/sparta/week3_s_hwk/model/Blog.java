@@ -1,6 +1,7 @@
 package com.sparta.week3_s_hwk.model;
 
 import com.sparta.week3_s_hwk.dto.BlogRequestDto;
+import com.sparta.week3_s_hwk.dto.BlogUpdateDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,7 +13,7 @@ import javax.persistence.*;
 public class Blog extends TimeStamped {// 생성,수정 시간을 자동으로 만들어줍니다.
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
-    private Long id;
+    private Long postNum;
 
     @Column(nullable = false)
     private String username;
@@ -23,31 +24,30 @@ public class Blog extends TimeStamped {// 생성,수정 시간을 자동으로 �
     @Column(nullable = false)
     private String contents;
 
-    //비밀번호는 어떻게 하지...?
     @Column(nullable = false)
-    private String password;
+    private Long userId;
 
     //생성자에 username, title, contents 받아온다.
-    public Blog(String username, String title, String contents, String password){
+    public Blog(Long postNum, String username, String title, String contents, Long userId){
+        this.postNum = postNum;
         this.username = username;
         this.title = title;
         this.contents = contents;
-        this.password = password;
+        this.userId = userId;
     }
 
     //처음 시작 . 생성을 생각해보면 Blog 정보를 물고오는 녀석 PersonRequestDto
-    public  Blog(BlogRequestDto requestDto){
-        this.username = requestDto.getUsername();
+    public  Blog(BlogRequestDto requestDto, String username, Long userId){
+        this.username = username;
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
-        this.password = requestDto.getPassword();
+        this.userId = userId;
     }
 
     //변경
-    public void update(BlogRequestDto requestDto){
-        this.username = requestDto.getUsername();
+    public void update(BlogUpdateDto requestDto){
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
-        this.password = requestDto.getPassword();
+        this.userId = userId;
     }
 }

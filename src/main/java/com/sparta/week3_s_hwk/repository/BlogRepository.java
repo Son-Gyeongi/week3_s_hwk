@@ -16,4 +16,7 @@ public interface BlogRepository extends JpaRepository <Blog,Long> {
     List<Blog> findAllByOrderByModifiedAtDesc();
     //findAll By OrderBy ModifiedAt Desc 수정시간된 날짜를 기준으로 내림차순으로 정렬해줘(최신순으로 정렬해줘)
     //최신순으로 정렬하는 SQL문을 JPA가 다 알아서 짜준다.
+
+    //postNum으로 찾겠다.
+//    Long findBlogByPostNum();
 }

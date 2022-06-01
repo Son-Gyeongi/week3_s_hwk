@@ -1,10 +1,13 @@
 package com.sparta.week3_s_hwk.controller;
 
+import com.sparta.week3_s_hwk.dto.BlogUpdateDto;
 import com.sparta.week3_s_hwk.model.Blog;
 import com.sparta.week3_s_hwk.dto.BlogRequestDto;
 import com.sparta.week3_s_hwk.repository.BlogRepository;
+import com.sparta.week3_s_hwk.security.UserDetailsImpl;
 import com.sparta.week3_s_hwk.service.BlogService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,23 +24,30 @@ public class BlogController {
 
     //첫번째 생성(작성)하는 API 만들기
     @PostMapping("/api/blogs")
-    public Blog createBlog(@RequestBody BlogRequestDto requestDto) {
-        //@RequestBody PersonRequestDto requestDto 이렇게 적어줘야 전달하는 정보가 RequestDto에 자동으로 삽입된다.
+    public Blog createBlog(@RequestBody BlogRequestDto requestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        //@RequestBody BlogRequestDto requestDto 이렇게 적어줘야 전달하는 정보가 RequestDto에 자동으로 삽입된다.
+
+        // 로그인 되어 있는 회원 테이블의 ID
+        Long userId = userDetails.getUser().getId();
+        // 로그인 되어 있는 회원 테이블의 username
+        String username = userDetails.getUser().getUsername();
+
         //Blog에 저장하려면 Blog클래스 생성해야함
-        Blog blog = new Blog(requestDto);
+        Blog blog = new Blog(requestDto, username, userId);
         //저장은 blogRepository
         return blogRepository.save(blog);
         //blog 저장 ->models 패키지 아래에 blogRepository 자바파일(인터페이스로 설정) 만들자
     }
 
     //비밀번호 조회
-    @GetMapping("/api/blogs/password/{id}")
-    public String readPassword(@PathVariable Long id) {
-        Blog blog =blogRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("아이디가 존재하지 않습니다")
-        );
-        return blog.getPassword();
-    }
+//    @GetMapping("/api/blogs/password/{id}")
+//    public String readPassword(@PathVariable Long id) {
+//        Blog blog =blogRepository.findById(id).orElseThrow(
+//                () -> new IllegalArgumentException("아이디가 존재하지 않습니다")
+//        );
+//        return blog.getPassword();
+//    }
 
     //전체 목록을 조회하는 메서드 <= 상세 게시글 보기에 참고하자
     @GetMapping("/api/blogs")
@@ -45,7 +55,7 @@ public class BlogController {
         return blogRepository.findAllByOrderByModifiedAtDesc();
     }
 
-    //삭제 메서드
+    //삭제 메서드 id==postNum
     @DeleteMapping("/api/blogs/{id}")
     public Long deleteBlog(@PathVariable Long id){
         blogRepository.deleteById(id);
@@ -54,7 +64,9 @@ public class BlogController {
 
     //업데이트 메서드
     @PutMapping("/api/blogs/{id}")
-    public Long updateBlog(@PathVariable Long id, @RequestBody BlogRequestDto requestDto) {
+    public Long updateBlog(@PathVariable Long id, @RequestBody BlogUpdateDto requestDto) {
+        //id == postNum
+
         blogService.update(id, requestDto);
         return id;
     }

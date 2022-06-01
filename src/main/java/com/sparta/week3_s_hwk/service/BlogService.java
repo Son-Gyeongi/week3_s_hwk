@@ -1,8 +1,8 @@
 package com.sparta.week3_s_hwk.service;
 
+import com.sparta.week3_s_hwk.dto.BlogUpdateDto;
 import com.sparta.week3_s_hwk.model.Blog;
 import com.sparta.week3_s_hwk.repository.BlogRepository;
-import com.sparta.week3_s_hwk.dto.BlogRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +16,17 @@ public class BlogService {
 
     @Transactional   //DB에 진짜 반영이 되어야해!! /업데이트하려면 필수 어노테이셔(@)
     //업데이트 서비스
-    public Long update(Long id, BlogRequestDto requestDto) {
+    public void update(Long id, BlogUpdateDto requestDto) {
+        //id == postNum
          Blog blog =blogRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다")
         );
-         blog.update(requestDto); //update는 Blog 클래스에 만든다.
-        return blog.getId();
+
+//         if(requestDto.getUserId().equals(blog.getUserId())){
+//             blog.update(requestDto); //update는 Blog 클래스에 만든다.
+//         }
+
+        blog.update(requestDto); //update는 Blog 클래스에 만든다.
+
     }
 }
