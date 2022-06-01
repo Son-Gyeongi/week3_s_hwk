@@ -36,4 +36,12 @@ public class UserController {
         userService.registerUser(requestDto);
         return "redirect:/user/login";
     }
+
+    //디테일 페이지로 이동
+    //BlogContoller에서는 @RestContoller가 있어서 그런지 안되었는데
+    //UserCOntroller에서는 @Controller만 있어서 잘된다
+    @GetMapping("/api/detail/{id}")
+    public String detail() {
+        return "detail";
+    }
 }

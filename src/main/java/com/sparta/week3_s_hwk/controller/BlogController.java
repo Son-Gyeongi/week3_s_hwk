@@ -70,6 +70,8 @@ public class BlogController {
         blogService.update(id, requestDto);
         return id;
     }
+
+
 //
 //    //원하는 id값 목록 조회
 //    @GetMapping("/api/blogs/{id}")

@@ -42,17 +42,8 @@
 
         padding-top: 100px;
     }
-    .contents {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
     .card-body {
         background-color: #ffc10773;
-    }
-    .updateEdit {
-        display: none;
     }
     .mainContents {
         margin: 50px;
@@ -67,9 +58,6 @@
         width: 500px;
         padding-left: 0px;
         padding-right: 0px;
-    }
-    .commentCard{
-        border: 1px solid gray;
     }
 </style>
 
@@ -95,17 +83,17 @@
                     let title = message['title'];
                     let contents = message['contents'];
                     let modifiedAt = message['modifiedAt'];
-                    addHTML(id, username, title, contents, modifiedAt);
+                    addHTML(id, username, title, modifiedAt);
                 }
             }
         });
     }
-    function addHTML(id, username, title, contents, modifiedAt) {
-        let tempHtml = makeMessage(id, username, title, contents, modifiedAt);
+    function addHTML(id, username, title, modifiedAt) {
+        let tempHtml = makeMessage(id, username, title, modifiedAt);
         $('#cards-box').append(tempHtml);
     }
 
-    function makeMessage(id, username, title, contents, modifiedAt) {
+    function makeMessage(id, username, title, modifiedAt) {
         return `
                     <div class="card">
                         <div class="card-body">
@@ -113,69 +101,10 @@
                             <p class="card-writer">${username}</p>
                             <p class="card-date" style="color: gray;">${modifiedAt}</p>
                             <p class="control">
-                                <a class="btn btn-danger" href="detail.html?id=${id}">자세히 보기</a>
-                                <button class="btn btn-danger" onclick='$("#${id}-modal-detail").addClass("is-active")'>자세히보기</button>
+                                <a class="btn btn-danger" href="/api/detail/${id}">자세히 보기</a>
                             </p>
                         </div>
-                    </div>
-            <div class="modal" id="${id}-modal-detail">
-                <div class="modal-background" onclick='$("#${id}-modal-detail").removeClass("is-active")'></div>
-                <div class="modal-content">
-                    <div class="box">
-                        <article class="media">
-                            <div class="media-content">
-                                <!--contents 조회/수정-->
-                                <div class="contents">
-                                    <div id="${id}-titleContent" class="text">
-                                        ${title}
-                                    </div>
-                                    <div id="${id}-editTitle" class="updateEdit">
-                                        <input id="${id}-update-title" class="update is-title" placeholder="제목">
-                                    </div>
-                                    <div id="${id}-writerContent" class="text">
-                                        ${username}
-                                    </div>
-                                    <div id="${id}-dateContent" class="text">
-                                        ${modifiedAt}
-                                    </div>
-
-                                    <div id="${id}-contents" class="text">
-                                        ${contents}
-                                    </div>
-                                    <div id="${id}-editArea" class="edit">
-                                        <textarea id="${id}-update-textarea" class="textarea updateEdit"></textarea>
-                                    </div>
-                                </div>
-                                <nav class="level is-mobile">
-                                    <div class="level-left">
-
-                                    </div>
-                                    <div class="level-right">
-                                        <div class="level-item">
-                                            <a id="${id}-edit" onclick="editPost('${id}')">수정하기</a>
-                                        </div>
-                                        <div class="level-item"> <!--수정할 때 보이기-->
-                                            <a id="${id}-submit" class="updateEdit" onclick="submitEdit('${id}')">저장하기</a>
-                                        </div>
-                                        <div class="level-item"> <!--수정할 때 보이기-->
-                                            <a id="${id}-cancel" class="updateEdit" onclick="hideEdits('${id}')">수정취소</a>
-                                        </div>
-                                        <div class="level-item">
-                                            <a id="delete" onclick="deleteOne('${id}')">삭제하기</a>
-                                        </div>
-                                        <div class="level-item">
-                                            <a class="button"
-                                               onclick='$("#${id}-modal-detail").removeClass("is-active")'>취소</a>
-                                        </div>
-                                    </div>
-                                </nav>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-                <button class="modal-close is-large" aria-label="close"
-                        onclick='$("#${id}-modal-detail").removeClass("is-active")'></button>
-            </div>`;
+                    </div>`
     }
 
 
@@ -215,95 +144,6 @@
         });
     }
 
-    //게시글 수정하기 버튼
-    // 수정 버튼을 눌렀을 때, 기존 작성 내용을 수정박스(textarea)에 전달합니다.
-    function editPost(id) {
-        showEdits(id);
-        //제목수정
-        let updateTile = $(`#${id}-titleContent`).text().trim();
-        $(`#${id}-update-title`).val(updateTile);
-
-        //내용 수정
-        let updateContent = $(`#${id}-contents`).text().trim();
-        $(`#${id}-update-textarea`).val(updateContent);
-    }
-
-    function showEdits(id) {
-        $(`#${id}-editTitle`).show();
-        $(`#${id}-submit`).show();
-        $(`#${id}-update-textarea`).show();
-        $(`#${id}-cancel`).show();
-
-        $(`#${id}-titleContent`).hide();
-        $(`#${id}-dateContent`).hide();
-        $(`#${id}-contents`).hide();
-        $(`#${id}-edit`).hide();
-    }
-
-    function hideEdits(id) {
-        $(`#${id}-editTitle`).hide();
-        $(`#${id}-submit`).hide();
-        $(`#${id}-update-textarea`).hide();
-        $(`#${id}-cancel`).hide();
-
-        $(`#${id}-titleContent`).show();
-        $(`#${id}-dateContent`).show();
-        $(`#${id}-contents`).show();
-        $(`#${id}-edit`).show();
-    }
-
-    //수정한거 저장하기
-    function submitEdit(id) {
-            let title = $(`#${id}-update-title`).val().trim();
-            let contents = $(`#${id}-update-textarea`).val().trim();
-            if (isValidContents(contents) == false) {
-                return;
-            }
-            let data = {'title': title, 'contents': contents};
-
-            $.ajax({
-                type: "PUT",
-                url: `/api/blogs/${id}`,
-                contentType: "application/json",
-                data: JSON.stringify(data),
-                success: function (response) {
-                    alert('메시지 변경에 성공하였습니다.');
-                    window.location.reload();
-                }
-            });
-    }
-
-    //삭제하기 id ==postNum
-    function deleteOne(id) {
-            $.ajax({
-                type: "DELETE",
-                url: `/api/blogs/${id}`,
-                success: function (response) {
-                    alert('게시글 삭제 성공하였습니다.');
-                    window.location.reload();
-                }
-            })
-    }
-
-    //코멘트 관련 JS 작성
-    //댓글 수정하기 눌렀을 때
-    function showCommentEdits(id) {
-        $(`#${id}-comment-textarea`).show();
-        $(`#${id}-comment-submit`).show();
-        $(`#${id}-comment-cancel`).show();
-
-        $(`#${id}-reply`).hide();
-        $(`#${id}-comment-edit`).hide();
-    }
-
-    function hideCommentEdits(id) {
-        $(`#${id}-comment-textarea`).hide();
-        $(`#${id}-comment-submit`).hide();
-        $(`#${id}-comment-cancel`).hide();
-
-        $(`#${id}-reply`).show();
-        $(`#${id}-comment-edit`).show();
-    }
 </script>
 
 <body>
@@ -365,105 +205,9 @@
                     <p class="card-writer">작성자</p>
                     <p class="card-date" style="color: gray;">날짜</p>
                     <p class="control">
-                        <a class="btn btn-danger" href="detail.html?id=873">자세히 보기</a>
-                        <button class="btn btn-danger" onclick='$("#modal-detail").addClass("is-active")'>자세히보기</button>
+                        <a class="btn btn-danger" href="../templates/detail.html?id=873">자세히 보기</a>
                     </p>
                 </div>
-            </div>
-            <div class="modal" id="modal-detail">
-                <div class="modal-background" onclick='$("#modal-detail").removeClass("is-active")'></div>
-                <div class="modal-content">
-                    <div class="box">
-                        <article class="media">
-                            <div class="media-content">
-                                <!--contents 조회/수정-->
-                                <div class="contents">
-                                    <div id="1-titleContent" class="text">
-                                        제목
-                                    </div>
-                                    <div id="1-editTitle" class="updateEdit">
-                                        <input id="1-update-title" class="update is-title" placeholder="제목">
-                                    </div>
-                                    <div id="1-writerContent" class="text">
-                                        작성자
-                                    </div>
-                                    <div id="1-dateContent" class="text">
-                                        날짜
-                                    </div>
-                                    <div id="1-contents" class="text">
-                                        내용 작성
-                                    </div>
-                                    <div id="1-editArea" class="edit">
-                                        <textarea id="1-update-textarea" class="textarea updateEdit" ></textarea>
-                                    </div>
-                                </div>
-
-                                <nav class="level is-mobile">
-                                    <div class="level-left">
-
-                                    </div>
-                                    <div class="level-right">
-                                        <div class="level-item">
-                                            <a id="1-edit" onclick="editPost('1')">수정하기</a>
-                                        </div>
-                                        <div class="level-item"> <!--수정할 때 보이기-->
-                                            <a id="1-submit" class="updateEdit" onclick="submitEdit('1')">저장하기</a>
-                                        </div>
-                                        <div class="level-item">
-                                            <a id="delete" onclick="deleteOne('1')">삭제하기</a>
-                                        </div>
-                                        <div class="level-item">
-                                            <a class="button"
-                                               onclick='$("#modal-detail").removeClass("is-active")'>취소</a>
-                                        </div>
-                                    </div>
-                                </nav>
-
-                                <div class="form-floating comment-box">
-                                    <textarea class="form-control" placeholder="댓글을 입력해주세요" id="1-comments"></textarea>
-                                    <label for="1-comments">댓글을 입력해주세요</label>
-                                </div>
-                                <div class="commentCard">
-                                    <div class="metadata">
-                                        <div id="839-name" class="name">
-                                            hjyg
-                                        </div>
-                                        <div class="date">
-                                            2022-05-30 21:07:55
-                                        </div>
-                                    </div>
-                                    <div class="commentContents updateCommentEdit" id="839-reply">
-                                        그만큼 신나신다는거지
-                                    </div>
-                                    <div id="839-comment-editarea" class="edit">
-                                        <textarea id="839-comment-textarea" class="te-edit" name="" cols="30" rows="5"></textarea>
-                                    </div>
-                                    <div class="footer hide">
-                                        <div class="level-left">
-
-                                        </div>
-                                        <div class="level-right">
-                                            <div class="level-item">
-                                                <a id="1-comment-edit" onclick="editComment('1')">댓글수정</a>
-                                            </div>
-                                            <div class="level-item"> <!--수정할 때 보이기-->
-                                                <a id="1-comment-submit" class="updateCommentEdit" onclick="submitComment('1')">댓글저장</a>
-                                            </div>
-                                            <div class="level-item">
-                                                <a id="1-comment-delete" onclick="deleteOneComment('1')">댓글삭제</a>
-                                            </div>
-                                            <div class="level-item">
-                                                <a id="1-comment-cancel" class="button" onclick='$("#839-comment-editarea").hide()'>댓글작성취소</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-                <button class="modal-close is-large" aria-label="close"
-                        onclick='$("#modal-detail").removeClass("is-active")'></button>
             </div>
         </div>
     </section>
