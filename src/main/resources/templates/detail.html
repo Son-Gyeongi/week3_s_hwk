@@ -76,51 +76,39 @@
 <script>
     $(document).ready(function () {
         getMessages();
+        getComments()
     })
 
-    //전체 목록 조회
+    //상세 게시글 보여주기
     function getMessages() {
-        // $('#cards-box').empty();
+        $('#posting-box').empty();
+        let idx = location.href.split("/")[5];
+        console.log(idx);
         $.ajax({
             type: "GET",
-            url: "/api/blogs",
+            url: `/api/blogs/contents/${idx}`,
             data: {},
             success: function (response) {
                 console.log(response);
-                for (let i = 0; i < response.length; i++) {
-                    console.log(response);
-                    let message = response[i];
-                    let id = message['postNum'];
-                    let username = message['username'];
-                    let title = message['title'];
-                    let contents = message['contents'];
-                    let modifiedAt = message['modifiedAt'];
-                    addHTML(id, username, title, contents, modifiedAt);
-                }
+
+                let id = response['postNum'];
+                let username = response['username'];
+                let title = response['title'];
+                let contents = response['contents'];
+                let modifiedAt = response['modifiedAt'];
+                console.log(id, username, title, contents, modifiedAt);
+
+                addHTML(id, username, title, contents, modifiedAt);
             }
         });
     }
     function addHTML(id, username, title, contents, modifiedAt) {
         let tempHtml = makeMessage(id, username, title, contents, modifiedAt);
-        $('#cards-box').append(tempHtml);
+        $('#posting-box').append(tempHtml);
     }
 
     function makeMessage(id, username, title, contents, modifiedAt) {
         return `
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">${title}</h5>
-                            <p class="card-writer">${username}</p>
-                            <p class="card-date" style="color: gray;">${modifiedAt}</p>
-                            <p class="control">
-                                <button class="btn btn-danger" onclick='$("#${id}-modal-detail").addClass("is-active")'>자세히보기</button>
-                            </p>
-                        </div>
-                    </div>
-            <div class="modal" id="${id}-modal-detail">
-                <div class="modal-background" onclick='$("#${id}-modal-detail").removeClass("is-active")'></div>
-                <div class="modal-content">
-                    <div class="box">
                         <article class="media">
                             <div class="media-content">
                                 <!--contents 조회/수정-->
@@ -169,12 +157,7 @@
                                     </div>
                                 </nav>
                             </div>
-                        </article>
-                    </div>
-                </div>
-                <button class="modal-close is-large" aria-label="close"
-                        onclick='$("#${id}-modal-detail").removeClass("is-active")'></button>
-            </div>`;
+                        </article>`;
     }
 
 
@@ -209,7 +192,9 @@
             data: JSON.stringify(data),
             success: function (response) {
                 alert('메시지가 성공적으로 작성되었습니다.');
-                window.location.reload();
+                //홈 page으로 이동 - 참고 : https://devilfront.tistory.com/38
+                let url = `/`;
+                location.replace(url);
             }
         });
     }
@@ -278,8 +263,10 @@
             type: "DELETE",
             url: `/api/blogs/${id}`,
             success: function (response) {
-                alert('게시글 삭제 성공하였습니다.');
-                window.location.reload();
+                alert('게시글 삭제 성공하였습니다.')
+                //홈 page으로 이동 - 참고 : https://devilfront.tistory.com/38
+                let url = `/`;
+                location.replace(url);
             }
         })
     }
@@ -287,36 +274,41 @@
     //코멘트 관련 JS 작성
     //댓글 수정하기 눌렀을 때
     function showCommentEdits(id) {
-        $(`#${id}-comment-textarea`).show();
         $(`#${id}-comment-submit`).show();
         $(`#${id}-comment-cancel`).show();
+        $(`#${id}-comment-editarea`).show();
 
         $(`#${id}-reply`).hide();
         $(`#${id}-comment-edit`).hide();
     }
 
     function hideCommentEdits(id) {
-        $(`#${id}-comment-textarea`).hide();
         $(`#${id}-comment-submit`).hide();
         $(`#${id}-comment-cancel`).hide();
+        $(`#${id}-comment-editarea`).hide();
 
         $(`#${id}-reply`).show();
         $(`#${id}-comment-edit`).show();
     }
 
     //댓글 작성
-    function writePost() {
-        let contents = $('#textarea-post').val();
+    function writeReply() {
+        //http://localhost:8080/api/detail/2 여기서 "/" 기준으로 다섯번쨰 값을 가져오겠다.
+        //location.href.split("/")  -> ['http:', '', 'localhost:8080', 'api', 'detail', '2']
+        //location.href.split("/")[5]  ->  '2'
+        let postnum = location.href.split("/")[5];
+        console.log(postnum);
+        let contents = $('#reply').val();
 
         if (isValidContents(contents) == false) {
             return;
         }
 
-        let data = {'title':title, 'contents': contents};
+        let data = {'postNum': postnum, 'contents': contents};
 
         $.ajax({
             type: "POST",
-            url: "/api/blogs",
+            url: "/api/blogs/comments",
             contentType: "application/json",
             data: JSON.stringify(data),
             success: function (response) {
@@ -324,6 +316,69 @@
                 window.location.reload();
             }
         });
+    }
+    //상세 게시글 댓글 보여주기
+    function getComments() {
+        // $('#comment-box').empty();
+
+        $.ajax({
+            type: "GET",
+            url: "/api/blogs/comments",
+            data: {},
+            success: function (response) {
+                let idx = location.href.split("/")[5];
+                console.log(idx);
+                console.log(response);
+                    let id = response['postNum'];
+                    let username = response['username'];
+                    let contents = response['contents'];
+                    let modifiedAt = response['modifiedAt'];
+                    console.log(id, username, contents, modifiedAt);
+
+
+                    if(idx===id){
+                        addCommentHTML(id, username, contents, modifiedAt);
+                    }
+
+            }
+        });
+    }
+    function addCommentHTML(id, username, contents, modifiedAt) {
+        let tempHtml = makeComments(id, username, contents, modifiedAt);
+        $('#comment-box').append(tempHtml);
+    }
+    function makeComments(id, username, contents, modifiedAt) {
+        return `<div class="metadata">
+                                <div id="${id}-name" class="name">
+                                    ${username}
+                                </div>
+                                <div id="${id}-date" class="date">
+                                    ${modifiedAt}
+                                </div>
+                            </div>
+                            <div class="commentContents updateCommentEdit" id="${id}-reply">
+                                ${contents}
+                            </div>
+                            <div id="${id}-comment-editarea" class="edit">
+                                <textarea id="${id}-textarea-comment" class="te-edit" name="" cols="30" rows="5"></textarea>
+                            </div>
+                            <div class="level-left">
+
+                            </div>
+                            <div class="level-right">
+                                <div class="level-item">
+                                    <a id="${id}-comment-edit" onclick="editComment('${id}')">댓글수정</a>
+                                </div>
+                                <div class="level-item"> <!--수정할 때 보이기-->
+                                    <a id="${id}-comment-submit" class="updateCommentEdit" onclick="submitComment('${id}')">수정댓글저장</a>
+                                </div>
+                                <div class="level-item">
+                                    <a id="${id}-comment-delete" onclick="deleteOneComment('${id}')">댓글삭제</a>
+                                </div>
+                                <div class="level-item">
+                                    <a id="${id}-comment-cancel" class="button" onclick='$("#${id}-comment-editarea").hide()'>댓글작성취소</a>
+                                </div>
+                            </div>`;
     }
 </script>
 
@@ -381,7 +436,7 @@
 <section class="mainContents">
     <div id="cards-box">
         <div class="detail" id="detail">
-                <div class="box">
+                <div class="box" id="posting-box">
                     <article class="media">
                         <div class="media-content">
                             <!--contents 조회/수정-->
@@ -432,11 +487,20 @@
                 <article class="media">
                     <div class="media-content">
                         <!--comment contents 조회/수정-->
-                        <div class="form-floating comment-box">
-                            <textarea class="form-control" placeholder="댓글을 입력해주세요" id="1-comments"></textarea>
-                            <label for="1-comments">댓글을 입력해주세요</label>
+                        <div>
+                            <div class="form-floating comment-box">
+                                <textarea class="form-control" placeholder="댓글을 입력해주세요" id="reply"></textarea>
+                                <label for="reply">댓글을 입력해주세요</label>
+                            </div>
+                            <div class="level-right">
+                                <div class="level-item">
+                                    <button id="comment-save" class="btn btn-danger" onclick="writeReply()">댓글달기</button>
+<!--                                    <a id="comment-save" onclick="writeReply()">댓글달기</a>-->
+                                </div>
+                            </div>
                         </div>
-                        <div class="commentCard">
+
+                        <div id="comment-box" class="commentCard">
                             <div class="metadata">
                                 <div id="839-name" class="name">
                                     hjyg
@@ -449,27 +513,26 @@
                                 그만큼 신나신다는거지
                             </div>
                             <div id="839-comment-editarea" class="edit">
-                                <textarea id="textarea-comment" class="te-edit" name="" cols="30" rows="5"></textarea>
+                                <textarea id="839-textarea-comment" class="te-edit" name="" cols="30" rows="5"></textarea>
                             </div>
-                            <div class="footer hide">
-                                <div class="level-left">
+                            <div class="level-left">
 
+                            </div>
+                            <div class="level-right">
+                                <div class="level-item">
+                                    <a id="1-comment-edit" onclick="editComment('1')">댓글수정</a>
                                 </div>
-                                <div class="level-right">
-                                    <div class="level-item">
-                                        <a id="1-comment-edit" onclick="editComment('1')">댓글수정</a>
-                                    </div>
-                                    <div class="level-item"> <!--수정할 때 보이기-->
-                                        <a id="1-comment-submit" class="updateCommentEdit" onclick="submitComment('1')">댓글저장</a>
-                                    </div>
-                                    <div class="level-item">
-                                        <a id="1-comment-delete" onclick="deleteOneComment('1')">댓글삭제</a>
-                                    </div>
-                                    <div class="level-item">
-                                        <a id="1-comment-cancel" class="button" onclick='$("#839-comment-editarea").hide()'>댓글작성취소</a>
-                                    </div>
+                                <div class="level-item"> <!--수정할 때 보이기-->
+                                    <a id="1-comment-submit" class="updateCommentEdit" onclick="submitComment('1')">수정댓글저장</a>
+                                </div>
+                                <div class="level-item">
+                                    <a id="1-comment-delete" onclick="deleteOneComment('1')">댓글삭제</a>
+                                </div>
+                                <div class="level-item">
+                                    <a id="1-comment-cancel" class="button" onclick='$("#839-comment-editarea").hide()'>댓글작성취소</a>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </article>

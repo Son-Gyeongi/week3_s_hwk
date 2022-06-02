@@ -72,11 +72,13 @@ public class BlogController {
     }
 
 
-//
-//    //원하는 id값 목록 조회
-//    @GetMapping("/api/blogs/{id}")
-//    public List<Blog> readBlog(@PathVariable Long id, @RequestBody BlogRequestDto requestDto) {
-//        blogRepository.findById(id);
-//        //아이디를 찾아서 조회하는거 구글링해보자
-//    }
+    //원하는 post번호 내용 들고오기
+    @GetMapping("/api/blogs/contents/{id}")
+    public Blog readDetailBlog(@PathVariable Long id) {
+        Blog blog =blogRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("아이디가 존재하지 않습니다")
+        );
+
+        return blog;
+    }
 }
