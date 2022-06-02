@@ -303,6 +303,28 @@
         $(`#${id}-reply`).show();
         $(`#${id}-comment-edit`).show();
     }
+
+    //댓글 작성
+    function writePost() {
+        let contents = $('#textarea-post').val();
+
+        if (isValidContents(contents) == false) {
+            return;
+        }
+
+        let data = {'title':title, 'contents': contents};
+
+        $.ajax({
+            type: "POST",
+            url: "/api/blogs",
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function (response) {
+                alert('메시지가 성공적으로 작성되었습니다.');
+                window.location.reload();
+            }
+        });
+    }
 </script>
 
 <body>
@@ -383,7 +405,6 @@
                                     <textarea id="1-update-textarea" class="textarea updateEdit" ></textarea>
                                 </div>
                             </div>
-
                             <nav class="level is-mobile">
                                 <div class="level-left">
 
@@ -404,49 +425,55 @@
                                     </div>
                                 </div>
                             </nav>
-
-                            <div class="form-floating comment-box">
-                                <textarea class="form-control" placeholder="댓글을 입력해주세요" id="1-comments"></textarea>
-                                <label for="1-comments">댓글을 입력해주세요</label>
+                        </div>
+                    </article>
+                </div>
+            <div class="box">
+                <article class="media">
+                    <div class="media-content">
+                        <!--comment contents 조회/수정-->
+                        <div class="form-floating comment-box">
+                            <textarea class="form-control" placeholder="댓글을 입력해주세요" id="1-comments"></textarea>
+                            <label for="1-comments">댓글을 입력해주세요</label>
+                        </div>
+                        <div class="commentCard">
+                            <div class="metadata">
+                                <div id="839-name" class="name">
+                                    hjyg
+                                </div>
+                                <div class="date">
+                                    2022-05-30 21:07:55
+                                </div>
                             </div>
-                            <div class="commentCard">
-                                <div class="metadata">
-                                    <div id="839-name" class="name">
-                                        hjyg
-                                    </div>
-                                    <div class="date">
-                                        2022-05-30 21:07:55
-                                    </div>
-                                </div>
-                                <div class="commentContents updateCommentEdit" id="839-reply">
-                                    그만큼 신나신다는거지
-                                </div>
-                                <div id="839-comment-editarea" class="edit">
-                                    <textarea id="839-comment-textarea" class="te-edit" name="" cols="30" rows="5"></textarea>
-                                </div>
-                                <div class="footer hide">
-                                    <div class="level-left">
+                            <div class="commentContents updateCommentEdit" id="839-reply">
+                                그만큼 신나신다는거지
+                            </div>
+                            <div id="839-comment-editarea" class="edit">
+                                <textarea id="textarea-comment" class="te-edit" name="" cols="30" rows="5"></textarea>
+                            </div>
+                            <div class="footer hide">
+                                <div class="level-left">
 
+                                </div>
+                                <div class="level-right">
+                                    <div class="level-item">
+                                        <a id="1-comment-edit" onclick="editComment('1')">댓글수정</a>
                                     </div>
-                                    <div class="level-right">
-                                        <div class="level-item">
-                                            <a id="1-comment-edit" onclick="editComment('1')">댓글수정</a>
-                                        </div>
-                                        <div class="level-item"> <!--수정할 때 보이기-->
-                                            <a id="1-comment-submit" class="updateCommentEdit" onclick="submitComment('1')">댓글저장</a>
-                                        </div>
-                                        <div class="level-item">
-                                            <a id="1-comment-delete" onclick="deleteOneComment('1')">댓글삭제</a>
-                                        </div>
-                                        <div class="level-item">
-                                            <a id="1-comment-cancel" class="button" onclick='$("#839-comment-editarea").hide()'>댓글작성취소</a>
-                                        </div>
+                                    <div class="level-item"> <!--수정할 때 보이기-->
+                                        <a id="1-comment-submit" class="updateCommentEdit" onclick="submitComment('1')">댓글저장</a>
+                                    </div>
+                                    <div class="level-item">
+                                        <a id="1-comment-delete" onclick="deleteOneComment('1')">댓글삭제</a>
+                                    </div>
+                                    <div class="level-item">
+                                        <a id="1-comment-cancel" class="button" onclick='$("#839-comment-editarea").hide()'>댓글작성취소</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </article>
                     </div>
+                </article>
+            </div>
         </div>
     </div>
 </section>

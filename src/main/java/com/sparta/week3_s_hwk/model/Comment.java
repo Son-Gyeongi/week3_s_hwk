@@ -27,14 +27,10 @@ public class Comment extends TimeStamped {// 생성,수정 시간을 자동으�
     @Column(nullable = false)
     private Long postNum;
 
-    @Column(nullable = false)
-    private Long userId;
-
     //코멘트 등록
-    public  Comment(CommentRequestDto requestDto, String username, Long userId){
+    public  Comment(CommentRequestDto requestDto, String username){
         this.username = username;
         this.contents = requestDto.getContents();
         this.postNum = requestDto.getPostNum();
-        this.userId = userId;
     }
 }
